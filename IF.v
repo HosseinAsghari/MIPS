@@ -1,7 +1,8 @@
 module IF(
-        input clk, rst, if_enable,
+        input clk, rst, pc_enable,
         input [5:0] imm_pc_offset,
         input branch_enable,
+		  input [15:0] pc_branched,
 		  output [2:0] read1_addr, read2_addr, write_addr,
         output reg [15:0] pc,
         output [15:0] instruction
@@ -21,10 +22,10 @@ module IF(
                 if(rst)
                         pc<='h0000;
                 else
-                        if(if_enable)
+                        if(pc_enable)
                         begin
-                                pc<=(branch_enable=='b1)?
-                                        (pc+{10'b0000000000, imm_pc_offset}):pc+1;
+                                pc <= (branch_enable == 'b1)?
+                                        (pc_branched) : pc + 1;
                         end
         end
 endmodule 
