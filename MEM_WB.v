@@ -1,5 +1,5 @@
 module MEM_WB(
-		input clk, input rst,
+		input clk, input rst, mem_wb_en,
 		input [15:0] inst, res,
 		input wr_en,
 		input [2:0] write_addr,
@@ -18,7 +18,7 @@ module MEM_WB(
 			write_addr_out <= 0;
 			
 		end
-		else
+		else if (mem_wb_en)
 		begin
 			inst_out <= inst;
 			res_out <= res;
