@@ -1,11 +1,11 @@
 module ID_EX(
 		input clk, input rst, ctrl_regs_sel,
 		input [15:0] inst, read1, read2, imm_data,
-		input wr_en, alu_src2_sel_rf_imm, mem_store_in, wb_mem_select_in,
+		input wr_en, input[1:0] alu_src2_sel_rf_imm, input mem_store_in, wb_mem_select_in,
 		input [2:0] alu_cmd,
 		input [2:0] write_addr,
 		output reg[15:0] inst_out, read1_out, read2_out, imm_data_out,
-		output reg wr_en_out, alu_src2_sel_rf_imm_out, mem_store_out, wb_mem_select_out,
+		output reg wr_en_out, output reg [1:0] alu_src2_sel_rf_imm_out, output reg mem_store_out, wb_mem_select_out,
 		output reg [2:0] alu_cmd_out,
 		output reg [2:0] write_addr_out);
 		

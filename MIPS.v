@@ -19,12 +19,13 @@ module MIPS(
 	wire [15:0] if_inst, pc, id_inst, id_pc;
 	wire [2:0] id_alu_cmd, if_alu_cmd, if_read1_addr, if_read2_addr, id_read1_addr, id_read2_addr;
 	wire [2:0] if_write_addr, id_write_addr;
-	wire id_wr_en, br_comm, br_perform, id_alu_src2_sel_rf_imm, id_mem_store, id_wb_mem_select;
+	wire id_wr_en, br_comm, br_perform, id_mem_store, id_wb_mem_select;
+	wire [1:0] id_alu_src2_sel_rf_imm;
 	wire [15:0] pc_branched;
 	
 	wire pc_en, if_id_en, id_ex_regs_sel; // HDU wires
 	
-	assign LEDR = {2'b00, pc};
+	//assign LEDR = {2'b00, pc};
 	
 	IF if_instance (clk, rst, pc_en, 0, br_perform, pc_branched, if_read1_addr, if_read2_addr, if_write_addr, pc, if_inst);
 	
@@ -41,7 +42,8 @@ module MIPS(
 	
 	wire [15:0] id_ex_inst, ex_inst, id_read1, id_read2, id_ex_read1, id_ex_read2, test_selected_reg;
 	wire [2:0] reg_selector, wb_id_write_addr, ex_write_addr, ex_alu_cmd;
-	wire wb_id_wr_en, ex_wr_en, ex_alu_src2_sel_rf_imm, ex_mem_store, ex_wb_mem_select;
+	wire wb_id_wr_en, ex_wr_en, ex_mem_store, ex_wb_mem_select;
+	wire [1:0] ex_alu_src2_sel_rf_imm;
 	wire [15:0] wb_id_data, ex_imm_data, id_imm_data;
 	
 	assign reg_selector = SW[2:0];
@@ -66,6 +68,7 @@ module MIPS(
 								ex_alu_cmd, 
 								ex_write_addr);
 	
+	assign LEDR = {2'b00, test_selected_reg};
 	seg7_disp seg7_rf (HEX4, test_selected_reg[3:0]);
 	seg7_disp seg7_id (HEX1, ex_inst[15:12]);
 	
@@ -75,7 +78,7 @@ module MIPS(
 
 	
 	
-	EX ex_instance (ex_inst, id_ex_read1, id_ex_read2, ex_imm_data, ex_alu_cmd, ex_alu_src2_sel_rf_imm, ex_mem_inst, ex_res);
+	EX ex_instance (ex_inst, id_inst, id_ex_read1, id_ex_read2, ex_imm_data, ex_alu_cmd, ex_alu_src2_sel_rf_imm, ex_mem_inst, ex_res);
 	
 	EX_MEM ex_mem_instance (clk, rst, 
 									ex_mem_inst, ex_res, id_ex_read2, 
@@ -111,7 +114,7 @@ module MIPS(
 	WB wb_instance (wb_wr_en, wb_write_addr, wb_inst, mem_wb_res, 
 	wb_id_wr_en, wb_id_write_addr, wb_out_inst, wb_id_data);
 	
-	HDU hdu_instance (id_inst,
+	HDU hdu_instance (id_inst, ex_inst,
 							ex_write_addr, mem_write_addr, wb_write_addr,
 							ex_wr_en, mem_wr_en, wb_wr_en,
 							pc_en, if_id_en, id_ex_regs_sel);

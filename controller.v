@@ -1,11 +1,11 @@
 module controller(input [15:0] instruction,
 					output [2:0] alu_cmd,
-					output wr_en, br_comm, alu_src2_sel_rf_imm, mem_store, wb_mem_select);
+					output wr_en, br_comm, output [1:0] alu_src2_sel_rf_imm, output mem_store, wb_mem_select);
 
 	wire [3:0] opcode;
 	
 	assign opcode = instruction[15:12];
-	assign alu_cmd = (opcode == 'b0001 || opcode == 'b1001 || opcode == 'b1010 || opcode == 'b1011) ? 'b000 : 
+	assign alu_cmd = (opcode == 'b0001 || opcode == 'b1001 || opcode == 'b1010 || opcode == 'b1011 || opcode =='b1111) ? 'b000 : 
 							(opcode == 'b0010) ? 'b001 :
 							(opcode == 'b0011) ? 'b010 :
 							(opcode == 'b0100) ? 'b011 :
@@ -14,10 +14,11 @@ module controller(input [15:0] instruction,
 							(opcode == 'b0111) ? 'b110 : 'b111;
 
 	assign wr_en = ~(opcode == 'b0000 || opcode == 'b1011 || opcode == 'b1100 ||
-							opcode == 'b1101 || opcode == 'b1110 || opcode == 'b1111);	
+							opcode == 'b1101 || opcode == 'b1110);	
 	assign br_comm = opcode == 'b1100;	
 
-	assign alu_src2_sel_rf_imm = (opcode == 'b1001 || opcode == 'b1010 || opcode == 'b1011);
+	assign alu_src2_sel_rf_imm = (opcode == 'b1001 || opcode == 'b1010 || opcode == 'b1011)? 2'b01 :
+					(opcode=='b1111)? 2'b10 : 2'b00;
 							
 	assign mem_store = (opcode == 'b1011);
 	
